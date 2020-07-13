@@ -222,7 +222,7 @@ def consensus():
 
     longest_chain = None
     current_len = len(blockchain.chain)
-
+    headers = {'Content-Type': "application/json"}
     for node in peers:
         try:
             response = requests.get('{}chain'.format(node), headers=headers, timeout=5)
