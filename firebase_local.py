@@ -1,5 +1,5 @@
 import pyrebase
-
+import json
 config = {
     "apiKey": "AIzaSyDi8BQjZHM0l2n1tEX5DukmyE0jQ2kctEQ",
     "authDomain": "cryptography-project-12233.firebaseapp.com",
@@ -24,5 +24,5 @@ def store_blockchain(data):
     DbRef = dbase.child("Nodes")
     # the data will be the transaction(index,prev_hash,Nonce,pow,data,timestamp)
     # integrate the markle tree and private key
-    DbRef.push(data)
+    DbRef.push(json.dumps(data))
 

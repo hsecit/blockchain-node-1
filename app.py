@@ -1,11 +1,14 @@
 import json
 import time
-
+from datetime import datetime
 import requests
-from flask import Flask, request
+from flask import Flask, request,render_template
 
 from blockchain_server import Block, Blockchain
 from firebase_local import store_blockchain
+from signatureTransaction import generate_transaction_hash
+from merklelib import MerkleTree
+
 
 app = Flask(__name__)
 
@@ -30,10 +33,12 @@ peers = set()
 # our application to add new data (posts) to the blockchain
 @app.route('/new_transaction', methods=['POST'])
 def new_transaction():
+    
     tx_data = request.get_json()
     
     tx_data["timestamp"] = time.time()
 
+    print(tx_data)
     blockchain.add_new_transaction(tx_data)
 
     return "Success", 201
@@ -49,14 +54,44 @@ def get_chain():
     chain_data = []
     for block in blockchain.chain:
         chain_data.append(block.__dict__)
-    node_chain = json.dumps({"length": len(chain_data),
-                       "chain": chain_data,
-                       "peers": list(peers)})
+    node_chain ={
+        'length': len(chain_data),
+        'chain': chain_data,
+        'peers': list(peers)}
+
     store_blockchain(node_chain)
     return json.dumps({"length": len(chain_data),
                        "chain": chain_data,
                        "peers": list(peers)})
 
+
+@app.route('/chain_index', methods=['GET'])
+def get_chain_index():
+    chain_data = []
+    for block in blockchain.chain:
+        chain_data.append(block.__dict__)
+    node_chain ={
+        'length': len(chain_data),
+        'chain': chain_data,
+        'peers': list(peers)}
+
+    store_blockchain(node_chain)
+    dataa = json.dumps({"length": len(chain_data),
+                       "chain": chain_data,
+                       "peers": list(peers)})
+    retres = json.loads(dataa)
+    trans = []
+    i=0
+    for tr in blockchain.last_block.transactions:
+        print(tr)
+        i=i+1
+        trans_hash = generate_transaction_hash(tr)
+
+        trans.append({"index": i,"thash": trans_hash})
+    date  = datetime.fromtimestamp(int(blockchain.last_block.timestamp))
+    merklroot = MerkleTree(trans)
+    data_tr ={"transactions":trans,"merkle":merklroot,"date":date}
+    return render_template("blockchain.html",blockchain=retres,inf=data_tr)
 
 # endpoint to request the node to mine the unconfirmed
 # transactions (if any). We'll be using it to initiate
@@ -171,9 +206,11 @@ def verify_and_add_block():
 
 
 # endpoint to query unconfirmed transactions
-@app.route('/pending_tx')
+@app.route('/wait_mine')
 def get_pending_tx():
-    return json.dumps(blockchain.unconfirmed_transactions)
+    data_ =json.dumps(blockchain.unconfirmed_transactions)
+    data_ready=json.loads(data_)
+    return render_template("notmined.html",unchain=data_ready)
 
 
 def consensus():
@@ -216,4 +253,4 @@ def announce_new_block(block):
 
 
 if __name__ == '__main__':
-    app.run(debug=True,port=8000)
+    app.run(debug=True,port=8000,host='0.0.0.0')

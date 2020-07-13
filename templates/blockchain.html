@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blockchain info </title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        .table.no-cellpadding td
+          padding: 0;
+        }
+
+    </style>
+</head>
+<body style="background: #f2f2f7">
+
+<div class="container">
+   <div class="row">
+       <div class="col-md-6">
+            <h1>Number of BLocks :{{ blockchain['length']-1 }}</h1>
+       </div>
+       <div class="col-md-6">
+           <h6 style="margin-top: 20px">Peers: {{ blockchain['peers'] }}</h6>
+       </div>
+   </div>
+    <table class="table" style="margin-top: 30px;">
+        <thead class="thead-light">
+        <tr>
+            <th>Block Num</th>
+            <th>Previous Hash</th>
+            <th>nonce</th>
+            <th>Time</th>
+            <th>Transactions</th>
+        </tr>
+        </thead>
+        <tbody class="overflow-auto" style="height: 1rem;">
+        {% for block in blockchain['chain'] %}
+        <tr style="background: white">
+            <td>#{{ block['index'] }}</td>
+            <td>{{ block['previous_hash'] }}</td>
+            <td>{{ block['nonce'] }}</td>
+            <td>{{ block['timestamp'] }}</td>
+            <td>makle tree</td>
+
+        </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+    <div class="card">
+        <div class="card-body">
+            {% set block = blockchain['chain'][blockchain['length']-1] -%}
+            <h3 class="card-title" >Details of Last Block</h3>
+            <h6>Block Index: #{{ block['index'] }}</h6>
+            <h6>Block Hash: {{ block['hash'] }}</h6>
+            <h6>Block Previous Hash: {{ block['previous_hash'] }}</h6>
+            <h6>Block Nonce : {{ block['nonce'] }}</h6>
+            <h6>Date : {{ inf['date']}} </h6>
+            <h6>Merkle Root: {{inf['merkle']}}</h6>
+        </div>
+    </div>
+    <div class="card" style="margin-top: 15px;margin-bottom:30px;padding: 5px" >
+    <h3 class="card-title">Transactions of Last Block</h3>
+        <div class="card-body row">
+            <div class="col-md-5">
+            <table class="table" style="margin-top:5px ;">
+                <thead class="thead-light">
+                <tr>
+                    <th>Trans Num</th>
+                    <th>hash</th>
+                </tr>
+                </thead>
+                {% for trh in inf['transactions'] %}
+                <tr style="background: white">
+                    <td>{{ trh['index']}}</td>
+                    <td> {{ trh['thash']}}</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </table>
+            </div>
+            <div class="col-md-7">
+                {% set trans = blockchain['chain'][blockchain['length']-1]['transactions'] -%}
+
+            <table class="table" style="margin-top:5px ;">
+                <thead class="thead-light">
+
+                <tr>
+                    <th>Sender addr</th>
+                    <th>receiver addr</th>
+                    <th>Amount</th>
+                    <th>Time</th>
+                </tr>
+                </thead>
+                {% set i=0 %}
+                {% for tr in trans %}
+                <tr style="background: white">
+                    <td>{{tr["sender"]}}</td>
+                    <td>{{tr["recipient"]}}</td>
+                    <td>{{tr["amount"]}}</td>
+                    <td>{{tr["timestamp"]}}</td>
+                    {{tr.index}}
+                </tr>
+
+                {% set i = i+1 %}
+                {% endfor %}
+
+            </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Unconfirmed transactions</title>
+</head>
+<body style="background: #f2f2f7">
+
+<div class="container">
+    <table class="table" style="margin-top: 30px;">
+        <thead class="thead-light">
+        <tr>
+            <th>Transaction Num</th>
+            <th>Sender addr</th>
+            <th>receiver addr</th>
+            <th>Amount</th>
+            <th>Time</th>
+        </tr>
+
+
+        </thead>
+
+        {% for tr in unchain %}
+        <tr style="background: white">
+            <td>1</td>
+            <td>{{tr["sender"]}}</td>
+            <td>{{tr["recipient"]}}</td>
+            <td>{{tr["amount"]}}</td>
+            <td>{{tr["timestamp"]}}</td>
+
+        </tr>
+        {% endfor %}
+
+    </table>
+    <div class="row">
+        <div class="col text-center">
+            <a href="/mine">
+                <button type="submit" class="btn btn-lg btn-primary " style="margin-top: 20px">Mine Transactions
+                </button>
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
