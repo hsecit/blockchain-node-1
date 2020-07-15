@@ -63,7 +63,7 @@
     <div class="card" style="margin-top: 15px;margin-bottom:30px;padding: 5px" >
     <h3 class="card-title">Transactions of Last Block</h3>
         <div class="card-body row">
-            <div class="col-md-5">
+            <div class="col-md-12">
             <table class="table" style="margin-top:5px ;">
                 <thead class="thead-light">
                 <tr>
@@ -82,7 +82,7 @@
 
             </table>
             </div>
-            <div class="col-md-7">
+            <div class="col-md-12">
                 {% set trans = blockchain['chain'][blockchain['length']-1]['transactions'] -%}
 
             <table class="table" style="margin-top:5px ;">

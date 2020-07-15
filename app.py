@@ -2,13 +2,13 @@ import json
 import time
 from datetime import datetime
 import requests
-from flask import Flask, request,render_template
-
+from flask import Flask, request,render_template,jsonify
+from usePubPrivatekey import share_public_key
 from blockchain_server import Block, Blockchain
 from firebase_local import store_blockchain
 from signatureTransaction import generate_transaction_hash
 from merklelib import MerkleTree
-
+from send_to_bank_data import send_it_now
 
 app = Flask(__name__)
 
@@ -112,8 +112,33 @@ def mine_unconfirmed_transactions():
 
 
 ########################################################################################################
+# BANK TWO FACTOR AUTH                                                                                 #
 ########################################################################################################
+# produit + button by
+# popup formulaire (num,visa,date,exp,code) valid
 
+# /// send request 
+# genrate code(randmo(8) sha256)
+@app.route("/bank/buy")
+def buy_online():
+    share_public_key()
+    return render_template("buy.html")
+
+@app.route("/send_to_bank",methods=['POST'])
+def send_data_to_bank_():
+    cc_number = request.form['cc-number']
+    cc_exp = request.form['cc-exp']
+    ccv_code = request.form['x_card_code']
+    x_zip = request.form['x_zip']
+    data = {
+        "cc_number":cc_number,
+        "cc_exp":cc_exp,
+        "ccv_code":ccv_code
+    }
+    print(data)
+    account_status = send_it_now(data)
+    print(account_status)
+    return json.dumps(account_status)
 ########################################################################################################
 #       ADD NEW NODE TO THE NETWORK                                                                    #
 ########################################################################################################
@@ -256,4 +281,4 @@ def announce_new_block(block):
 
 
 if __name__ == '__main__':
-    app.run(debug=True,port=8000,host='0.0.0.0')
+    app.run(debug=True,port=8001,host='0.0.0.0')
